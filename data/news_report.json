@@ -1,0 +1,104 @@
+{
+    "generated_at": "2026-06-05T13:40:16.757440",
+    "news_count": 12,
+    "summary": "===== TENDENCIAS =====\n\n- AI: 6 noticias\n- CLOUD: 3 noticias\n- DEVOPS: 2 noticias\n- OTHER: 1 noticias\n- SECURITY: 1 noticias\n\n===== TEMAS DETECTADOS =====\n\n* Show HN: Lowfat – pluggable CLI filter that saved 91.8% of my LLM tokens\n* Is it a problem if I'm only learning on-prem Kubernetes and never touch AWS/Azure?\n* Is Azure capacity this constrained or am I doing it wrong?\n* Looking at Cyberhaven for DLP, curious how it’s been for others\n* I Built a Retro Terminal Game to Make Kubernetes Less Boring\n* anthropic wants a global ai freeze. they're also about to ipo at $1 trillion.\n* I am now negotiating with AI as part of my job, and it's going like you would expect. How can I circumvent it to speak to a representative?\n* Six places our AI builds keep breaking\n* $2.5T in AI spending this year. 95% produces zero P&L impact.\n* Only 10% of SOCs Say They’re Getting Excellent Value From AI. Here’s What the Second Wave Has to Deliver\n\n===== RECOMENDACIONES =====\n\n- Revisar impacto de AI Agents y automatización\n- Priorizar gestión de vulnerabilidades\n- Evaluar platform engineering y automatización",
+    "articles": [
+        {
+            "title": "Show HN: Lowfat – pluggable CLI filter that saved 91.8% of my LLM tokens",
+            "link": "https://github.com/zdk/lowfat",
+            "source": "https://hnrss.org/frontpage",
+            "categories": [
+                "AI"
+            ]
+        },
+        {
+            "title": "Is it a problem if I'm only learning on-prem Kubernetes and never touch AWS/Azure?",
+            "link": "https://www.reddit.com/r/devops/comments/1txhq9k/is_it_a_problem_if_im_only_learning_onprem/",
+            "source": "https://www.reddit.com/r/devops/.rss",
+            "categories": [
+                "DEVOPS",
+                "CLOUD"
+            ]
+        },
+        {
+            "title": "Is Azure capacity this constrained or am I doing it wrong?",
+            "link": "https://www.reddit.com/r/devops/comments/1txhaum/is_azure_capacity_this_constrained_or_am_i_doing/",
+            "source": "https://www.reddit.com/r/devops/.rss",
+            "categories": [
+                "CLOUD"
+            ]
+        },
+        {
+            "title": "Looking at Cyberhaven for DLP, curious how it’s been for others",
+            "link": "https://www.reddit.com/r/devops/comments/1txf6gk/looking_at_cyberhaven_for_dlp_curious_how_its/",
+            "source": "https://www.reddit.com/r/devops/.rss",
+            "categories": [
+                "OTHER"
+            ]
+        },
+        {
+            "title": "I Built a Retro Terminal Game to Make Kubernetes Less Boring",
+            "link": "https://www.reddit.com/r/devops/comments/1twrooa/i_built_a_retro_terminal_game_to_make_kubernetes/",
+            "source": "https://www.reddit.com/r/devops/.rss",
+            "categories": [
+                "DEVOPS"
+            ]
+        },
+        {
+            "title": "anthropic wants a global ai freeze. they're also about to ipo at $1 trillion.",
+            "link": "https://www.reddit.com/r/artificial/comments/1txeysy/anthropic_wants_a_global_ai_freeze_theyre_also/",
+            "source": "https://www.reddit.com/r/artificial/.rss",
+            "categories": [
+                "AI"
+            ]
+        },
+        {
+            "title": "I am now negotiating with AI as part of my job, and it's going like you would expect. How can I circumvent it to speak to a representative?",
+            "link": "https://www.reddit.com/r/artificial/comments/1tx56d7/i_am_now_negotiating_with_ai_as_part_of_my_job/",
+            "source": "https://www.reddit.com/r/artificial/.rss",
+            "categories": [
+                "AI"
+            ]
+        },
+        {
+            "title": "Six places our AI builds keep breaking",
+            "link": "https://www.reddit.com/r/artificial/comments/1txjf8n/six_places_our_ai_builds_keep_breaking/",
+            "source": "https://www.reddit.com/r/artificial/.rss",
+            "categories": [
+                "AI"
+            ]
+        },
+        {
+            "title": "$2.5T in AI spending this year. 95% produces zero P&L impact.",
+            "link": "https://www.reddit.com/r/artificial/comments/1twupqt/25t_in_ai_spending_this_year_95_produces_zero_pl/",
+            "source": "https://www.reddit.com/r/artificial/.rss",
+            "categories": [
+                "AI"
+            ]
+        },
+        {
+            "title": "Only 10% of SOCs Say They’re Getting Excellent Value From AI. Here’s What the Second Wave Has to Deliver",
+            "link": "https://thehackernews.com/2026/06/only-10-of-socs-say-theyre-getting.html",
+            "source": "https://feeds.feedburner.com/TheHackersNews",
+            "categories": [
+                "AI"
+            ]
+        },
+        {
+            "title": "Hackers Exploit Critical Everest Forms Pro WordPress Plugin Flaw to Take Over Sites",
+            "link": "https://thehackernews.com/2026/06/hackers-exploit-critical-everest-forms.html",
+            "source": "https://feeds.feedburner.com/TheHackersNews",
+            "categories": [
+                "SECURITY"
+            ]
+        },
+        {
+            "title": "PCPJack Hijacks 230 AWS, Google Cloud, and Azure Servers for Covert SMTP Relay Network",
+            "link": "https://thehackernews.com/2026/06/pcpjack-hijacks-230-aws-google-cloud.html",
+            "source": "https://feeds.feedburner.com/TheHackersNews",
+            "categories": [
+                "CLOUD"
+            ]
+        }
+    ]
+}
