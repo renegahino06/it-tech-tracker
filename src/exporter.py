@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 
-def save_report(news, summary):
+def save_report(news, summary, linkedin_text):
 
     report = {
 
@@ -11,6 +11,8 @@ def save_report(news, summary):
         "news_count": len(news),
 
         "summary": summary,
+
+        "linkedin_text": linkedin_text,
 
         "articles": news
     }

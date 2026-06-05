@@ -8,7 +8,7 @@ from summarizer import summarize_news
 
 from exporter import save_report
 
-from report_generator import generate_html_report
+from report_generator import generate_html_report, generate_linkedin_text
 
 from email_sender import send_email
 
@@ -43,15 +43,25 @@ def main():
         classified_news
     )
 
+    linkedin_text = generate_linkedin_text(summary)
+
     save_report(
         classified_news,
-        summary
+        summary,
+        linkedin_text
     )
 
     generate_html_report(
         classified_news,
-        summary
+        summary,
+        linkedin_text
     )
+
+    print(
+        "\nTexto sugerido para LinkedIn:\n"
+    )
+
+    print(linkedin_text)
 
     print(
         "\nEnviando correo..."

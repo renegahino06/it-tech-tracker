@@ -12,16 +12,16 @@ load_dotenv()
 
 def send_email():
 
-    sender = os.getenv("EMAIL_USER")
-    password = os.getenv("EMAIL_PASS")
-    receiver = os.getenv("EMAIL_TO")
+    sender = os.getenv("EMAIL_USER") or os.getenv("EMAIL_SENDER")
+    password = os.getenv("EMAIL_PASS") or os.getenv("EMAIL_PASSWORD")
+    receiver = os.getenv("EMAIL_TO") or os.getenv("EMAIL_RECEIVER")
     smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
     smtp_port = int(os.getenv("SMTP_PORT", "587"))
 
     if not sender or not password or not receiver:
         raise EnvironmentError(
             "Faltan variables de entorno para el envío de correo: "
-            "EMAIL_USER, EMAIL_PASS y EMAIL_TO son obligatorias."
+            "EMAIL_USER/EMAIL_SENDER, EMAIL_PASS/EMAIL_PASSWORD y EMAIL_TO/EMAIL_RECEIVER son obligatorias."
         )
 
     with open("data/report.html", "r", encoding="utf-8") as file:
