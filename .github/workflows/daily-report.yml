@@ -26,9 +26,12 @@ jobs:
       - name: Run daily report script
         env:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
           SMTP_HOST:  ${{ secrets.SMTP_HOST }}
           SMTP_PORT:  ${{ secrets.SMTP_PORT }}
           EMAIL_TO:   ${{ secrets.EMAIL_TO }}
+          EMAIL_RECEIVER: ${{ secrets.EMAIL_RECEIVER }}
         run: |
           python src/main.py
