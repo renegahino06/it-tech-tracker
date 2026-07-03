@@ -13,7 +13,7 @@ load_dotenv()
 def send_email():
 
     sender = os.getenv("EMAIL_USER") or os.getenv("EMAIL_SENDER")
-    password = os.getenv("EMAIL_PASS") or os.getenv("EMAIL_PASSWORD")
+    password = os.getenv("EMAIL_PASSWORD") or os.getenv("EMAIL_PASSWORD")
     receiver = os.getenv("EMAIL_TO") or os.getenv("EMAIL_RECEIVER")
     smtp_host = os.getenv("SMTP_HOST", "smtp.gmail.com")
     smtp_port = int(os.getenv("SMTP_PORT", "587"))
