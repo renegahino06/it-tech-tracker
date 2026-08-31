@@ -7,7 +7,6 @@ on:
   workflow_dispatch:
 
 jobs:
-
   run-report:
 
     runs-on: ubuntu-latest
@@ -48,17 +47,11 @@ jobs:
 
       - name: Run IT Tech Tracker
         env:
-
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
-
           EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
-
           EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
-
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
-
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
-
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
 
         run: |
@@ -66,11 +59,12 @@ jobs:
 
 
       # ================================================
-      # DEBUG GENERATED FILES
+      # SHOW GENERATED FILES
       # ================================================
 
       - name: Show generated files
         if: always()
+
         run: |
           echo "Generated files:"
           find data -maxdepth 2 -type f -print || true
@@ -82,10 +76,10 @@ jobs:
 
       - name: Upload Phase 1 artifacts
         if: always()
+
         uses: actions/upload-artifact@v4
 
         with:
-
           name: it-tech-tracker-content-${{ github.run_number }}
 
           path: |
@@ -96,5 +90,4 @@ jobs:
 
           if-no-files-found: warn
 
-          retention-days: 7
           retention-days: 7
