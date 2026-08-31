@@ -14,16 +14,27 @@ jobs:
 
     steps:
 
+      # ================================================
+      # CHECKOUT
+      # ================================================
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
 
+      # ================================================
+      # PYTHON
+      # ================================================
+
       - name: Set up Python
         uses: actions/setup-python@v5
-
         with:
           python-version: '3.11'
 
+
+      # ================================================
+      # DEPENDENCIES
+      # ================================================
 
       - name: Install dependencies
         run: |
@@ -31,34 +42,46 @@ jobs:
           pip install -r requirements.txt
 
 
+      # ================================================
+      # RUN IT TECH TRACKER
+      # ================================================
+
       - name: Run IT Tech Tracker
         env:
 
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
 
-          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_PASSWORD: ${{ secrets.EMAIL_PASSWORD }}
+
+          EMAIL_SENDER: ${{ secrets.EMAIL_SENDER }}
+
+          EMAIL_TO: ${{ secrets.EMAIL_TO }}
 
           SMTP_HOST: ${{ secrets.SMTP_HOST }}
 
           SMTP_PORT: ${{ secrets.SMTP_PORT }}
 
-          EMAIL_TO: ${{ secrets.EMAIL_TO }}
-
         run: |
           python src/main.py
 
 
+      # ================================================
+      # DEBUG GENERATED FILES
+      # ================================================
+
       - name: Show generated files
         if: always()
-
         run: |
           echo "Generated files:"
           find data -maxdepth 2 -type f -print || true
 
 
+      # ================================================
+      # UPLOAD PHASE 1 ARTIFACTS
+      # ================================================
+
       - name: Upload Phase 1 artifacts
         if: always()
-
         uses: actions/upload-artifact@v4
 
         with:
@@ -66,15 +89,12 @@ jobs:
           name: it-tech-tracker-content-${{ github.run_number }}
 
           path: |
-
             data/infographic.png
-
             data/top_story.json
-
             data/news_report.json
-
             data/report.html
 
           if-no-files-found: warn
 
+          retention-days: 7
           retention-days: 7
