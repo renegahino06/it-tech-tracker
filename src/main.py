@@ -16,6 +16,7 @@ from email_sender import send_email
 from ranking import rank_news, select_top_story
 from content_generator import build_content_package
 from infographic import generate_infographic
+from video_generator import generate_video
 
 
 def generate_phase1_assets(classified_news):
@@ -99,6 +100,22 @@ def generate_phase1_assets(classified_news):
         # La infografía no debe romper
         # el resto del pipeline.
         infographic_path = None
+
+    # El video no debe romper el resto del pipeline.
+    try:
+
+        video_path = generate_video(content)
+
+        print(
+            f"\nVideo generado: {video_path}"
+        )
+
+    except Exception as exc:
+
+        print(
+            "\nWARN: no se pudo generar "
+            f"el video: {exc}"
+        )
 
     return content, infographic_path
 
