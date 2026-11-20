@@ -87,6 +87,8 @@ jobs:
             data/top_story.json
             data/news_report.json
             data/report.html
+            data/narration.mp3
+            data/video.mp4
 
           if-no-files-found: warn
 
