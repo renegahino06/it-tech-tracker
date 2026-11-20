@@ -53,7 +53,7 @@ El pipeline genera un video de la noticia principal:
 2. `edge-tts` convierte el guion en audio (`data/narration.mp3`), sin API key.
 3. `ffmpeg` combina la infografía con el audio y crea `data/video.mp4`.
 
-`ffmpeg` debe estar instalado. En GitHub Actions (`ubuntu-latest`) ya viene incluido. En Windows puedes instalarlo con `winget install --id Gyan.FFmpeg`.
+`ffmpeg` debe estar instalado. El workflow de GitHub Actions lo instala con `apt-get` en cada ejecución. En Windows puedes instalarlo con `winget install --id Gyan.FFmpeg`.
 
 Si el video falla, el pipeline sigue y solo muestra un `WARN` en el log.
 
