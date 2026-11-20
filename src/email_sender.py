@@ -1,6 +1,7 @@
 import os
 import smtplib
 
+from email.mime.application import MIMEApplication
 from email.mime.image import MIMEImage
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -185,6 +186,45 @@ def send_email():
         print(
             "\nNo se encontró "
             "data/infographic.png"
+        )
+
+    # ==================================================
+    # ATTACH VIDEO
+    # ==================================================
+
+    video_path = "data/video.mp4"
+
+    if os.path.exists(video_path):
+
+        print(
+            "\nAdjuntando video..."
+        )
+
+        with open(
+            video_path,
+            "rb",
+        ) as file:
+
+            video = MIMEApplication(
+                file.read(),
+                _subtype="mp4",
+            )
+
+        video.add_header(
+            "Content-Disposition",
+            "attachment",
+            filename="video.mp4",
+        )
+
+        message.attach(
+            video
+        )
+
+    else:
+
+        print(
+            "\nNo se encontró "
+            "data/video.mp4"
         )
 
     # ==================================================
