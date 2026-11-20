@@ -47,13 +47,13 @@ Esto ya funciona con el flujo actual.
 
 ### Video informativo
 
-El pipeline genera un video de la noticia principal:
+El pipeline genera un video animado de la noticia principal:
 
-1. `src/video_generator.py` arma el guion en español a partir de `data/top_story.json`.
-2. `edge-tts` convierte el guion en audio (`data/narration.mp3`), sin API key.
-3. `ffmpeg` combina la infografía con el audio y crea `data/video.mp4`.
+1. `src/video_generator.py` divide el contenido de `data/top_story.json` en escenas: título, por qué importa, recomendaciones y cierre.
+2. `edge-tts` narra cada escena (sin API key) y devuelve los tiempos por palabra.
+3. `ffmpeg` renderiza cada escena con un fondo animado (filtro `gradients`), una tarjeta que entra con animación y subtítulos karaoke (`ass`) que se iluminan al ritmo de la voz. Después concatena las escenas en `data/video.mp4` y guarda la narración en `data/narration.mp3`.
 
-`ffmpeg` debe estar instalado. El workflow de GitHub Actions lo instala con `apt-get` en cada ejecución. En Windows puedes instalarlo con `winget install --id Gyan.FFmpeg`.
+`ffmpeg` debe estar instalado con soporte para `libass`. El workflow de GitHub Actions lo instala con `apt-get` en cada ejecución. En Windows puedes instalarlo con `winget install --id Gyan.FFmpeg`.
 
 Si el video falla, el pipeline sigue y solo muestra un `WARN` en el log.
 

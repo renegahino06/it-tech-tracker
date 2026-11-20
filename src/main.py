@@ -101,27 +101,21 @@ def generate_phase1_assets(classified_news):
         # el resto del pipeline.
         infographic_path = None
 
-    # El video depende de la infografía y
-    # tampoco debe romper el pipeline.
-    if infographic_path:
+    # El video no debe romper el resto del pipeline.
+    try:
 
-        try:
+        video_path = generate_video(content)
 
-            video_path = generate_video(
-                content,
-                infographic_path,
-            )
+        print(
+            f"\nVideo generado: {video_path}"
+        )
 
-            print(
-                f"\nVideo generado: {video_path}"
-            )
+    except Exception as exc:
 
-        except Exception as exc:
-
-            print(
-                "\nWARN: no se pudo generar "
-                f"el video: {exc}"
-            )
+        print(
+            "\nWARN: no se pudo generar "
+            f"el video: {exc}"
+        )
 
     return content, infographic_path
 
