@@ -1,3 +1,4 @@
+import glob
 import os
 import smtplib
 
@@ -192,9 +193,14 @@ def send_email():
     # ATTACH VIDEO
     # ==================================================
 
-    video_path = "data/video.mp4"
+    video_candidates = glob.glob("data/video_*.mp4")
 
-    if os.path.exists(video_path):
+    if video_candidates:
+
+        video_path = max(
+            video_candidates,
+            key=os.path.getmtime,
+        )
 
         print(
             "\nAdjuntando video..."
@@ -213,7 +219,7 @@ def send_email():
         video.add_header(
             "Content-Disposition",
             "attachment",
-            filename="video.mp4",
+            filename=os.path.basename(video_path),
         )
 
         message.attach(
@@ -223,8 +229,8 @@ def send_email():
     else:
 
         print(
-            "\nNo se encontró "
-            "data/video.mp4"
+            "\nNo se encontró ningún "
+            "data/video_*.mp4"
         )
 
     # ==================================================

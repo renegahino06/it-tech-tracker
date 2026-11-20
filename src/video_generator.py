@@ -6,10 +6,12 @@ la voz de edge-tts.
 """
 
 import asyncio
+import re
 import shutil
 import subprocess
 import tempfile
 import textwrap
+import unicodedata
 from pathlib import Path
 
 import edge_tts
@@ -354,6 +356,19 @@ def _concat(names, list_path, output_path, work_dir):
     )
 
 
+def _slugify(text, max_length=60):
+    normalized = unicodedata.normalize("NFKD", text)
+    ascii_text = normalized.encode("ascii", "ignore").decode("ascii")
+    slug = re.sub(r"[^a-z0-9]+", "-", ascii_text.lower()).strip("-")
+    if len(slug) > max_length:
+        slug = slug[:max_length].rsplit("-", 1)[0]
+    return slug or "noticia"
+
+
+def video_filename(content):
+    return f"video_{_slugify(content.get('title', ''))}.mp4"
+
+
 def generate_video(content, output_dir="data"):
 
     _require_ffmpeg()
@@ -394,7 +409,7 @@ def generate_video(content, output_dir="data"):
             segments.append(f"segment_{index}.mp4")
             audio_parts.append(audio_path.name)
 
-        video_path = output_dir / "video.mp4"
+        video_path = output_dir / video_filename(content)
         narration_path = output_dir / "narration.mp3"
 
         _concat(

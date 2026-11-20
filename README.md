@@ -51,7 +51,7 @@ El pipeline genera un video animado de la noticia principal:
 
 1. `src/video_generator.py` divide el contenido de `data/top_story.json` en escenas: título, por qué importa, recomendaciones y cierre.
 2. `edge-tts` narra cada escena (sin API key) y devuelve los tiempos por palabra.
-3. `ffmpeg` renderiza cada escena con un fondo animado (filtro `gradients`), una tarjeta que entra con animación y subtítulos karaoke (`ass`) que se iluminan al ritmo de la voz. Después concatena las escenas en `data/video.mp4` y guarda la narración en `data/narration.mp3`.
+3. `ffmpeg` renderiza cada escena con un fondo animado (filtro `gradients`), una tarjeta que entra con animación y subtítulos karaoke (`ass`) que se iluminan al ritmo de la voz. Después concatena las escenas en `data/video_<titulo-de-la-noticia>.mp4` (nombre generado a partir del título) y guarda la narración en `data/narration.mp3`.
 
 `ffmpeg` debe estar instalado con soporte para `libass`. El workflow de GitHub Actions lo instala con `apt-get` en cada ejecución. En Windows puedes instalarlo con `winget install --id Gyan.FFmpeg`.
 

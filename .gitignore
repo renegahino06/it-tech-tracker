@@ -4,4 +4,4 @@ __pycache__/
 *.pyc
 .env
 data/narration.mp3
-data/video.mp4
+data/video_*.mp4
