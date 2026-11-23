@@ -222,8 +222,7 @@ def build_scenes(content):
     guide = build_guide(content)
     scenes.append(_code_scene(content, guide))
 
-    if guide["diagram"]:
-        scenes.append(_diagram_scene(guide["diagram"]))
+    scenes.append(_diagram_scene(guide["diagram"]))
 
     if guide["steps"]:
         scenes.append(_steps_scene(guide["steps"]))
@@ -252,12 +251,12 @@ def build_scenes(content):
 
 def _diagram_scene(diagram):
     return {
-        "heading": "Escenario de riesgo",
+        "heading": diagram["heading"],
         "style": "diagram",
         "paragraphs": [],
         "diagram": diagram,
         "narration": (
-            "Así llega el riesgo: " + " ".join(diagram["nodes"]) + ". "
+            diagram["intro"] + " " + " ".join(diagram["nodes"]) + ". "
             "Puedes frenarlo en cada paso: "
             + ", ".join(diagram["controls"]) + "."
         ),

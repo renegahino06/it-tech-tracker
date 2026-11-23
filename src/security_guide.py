@@ -131,24 +131,110 @@ def _valid_lines(lines):
     ]
 
 
-def _diagram(component, categories):
-    # Diagrama defensivo del escenario de riesgo: cómo llega el
-    # ataque y en qué puntos se puede frenar.
-    if "SECURITY" not in categories:
-        return None
-
-    return {
+DIAGRAM_FLOWS = {
+    "AI": {
+        "heading": "Flujo de la IA",
         "nodes": [
-            "Internet o red no confiable",
-            f"{component or 'Software afectado'} expuesto",
-            "Versión sin parche",
-            "Acceso no autorizado",
+            "Modelo o agente",
+            "Datos e integraciones",
+            "Despliegue en producción",
+            "Impacto en usuarios",
         ],
         "controls": [
-            "Limita la exposición",
-            "Aplica el parche",
-            "Detecta y responde",
+            "Valida las salidas",
+            "Limita los permisos",
+            "Monitorea y registra",
         ],
+    },
+    "DEVOPS": {
+        "heading": "Flujo de entrega",
+        "nodes": [
+            "Código o imagen",
+            "Pipeline CI/CD",
+            "Infraestructura",
+            "Usuarios finales",
+        ],
+        "controls": [
+            "Escanea dependencias",
+            "Revisa los cambios",
+            "Monitorea el despliegue",
+        ],
+    },
+    "CLOUD": {
+        "heading": "Flujo en la nube",
+        "nodes": [
+            "Cuenta o servicio",
+            "Recursos en la nube",
+            "Configuración",
+            "Usuarios o datos",
+        ],
+        "controls": [
+            "Aplica mínimo privilegio",
+            "Revisa la configuración",
+            "Monitorea el acceso",
+        ],
+    },
+    "AUTOMATION": {
+        "heading": "Flujo automatizado",
+        "nodes": [
+            "Disparador",
+            "Flujo automatizado",
+            "Sistemas conectados",
+            "Resultado",
+        ],
+        "controls": [
+            "Revisa los permisos",
+            "Prueba en staging",
+            "Registra las ejecuciones",
+        ],
+    },
+}
+
+DIAGRAM_DEFAULT = {
+    "heading": "Flujo de la noticia",
+    "nodes": [
+        "Fuente de la noticia",
+        "Tecnología afectada",
+        "Equipos y usuarios",
+        "Resultado esperado",
+    ],
+    "controls": [
+        "Verifica la fuente",
+        "Evalúa tu contexto",
+        "Actúa según el impacto",
+    ],
+}
+
+
+def _diagram(component, categories):
+    # Diagrama del escenario de riesgo (seguridad) o del flujo
+    # general de la noticia, según la categoría principal.
+    if "SECURITY" in categories:
+        return {
+            "heading": "Escenario de riesgo",
+            "intro": "Así llega el riesgo:",
+            "nodes": [
+                "Internet o red no confiable",
+                f"{component or 'Software afectado'} expuesto",
+                "Versión sin parche",
+                "Acceso no autorizado",
+            ],
+            "controls": [
+                "Limita la exposición",
+                "Aplica el parche",
+                "Detecta y responde",
+            ],
+        }
+
+    flow = next(
+        (DIAGRAM_FLOWS[c] for c in categories if c in DIAGRAM_FLOWS),
+        DIAGRAM_DEFAULT,
+    )
+    return {
+        "heading": flow["heading"],
+        "intro": "Así funciona el flujo:",
+        "nodes": flow["nodes"],
+        "controls": flow["controls"],
     }
 
 
