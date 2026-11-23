@@ -6,6 +6,7 @@ MAX_STEPS = 4
 # cuando alguna palabra clave aparece en el título de la noticia.
 TECH_GUIDES = [
     {
+        "name": "OpenSSL",
         "keywords": ["openssl"],
         "description": "Verifica la versión de OpenSSL instalada.",
         "lang": "bash",
@@ -16,6 +17,7 @@ TECH_GUIDES = [
         ],
     },
     {
+        "name": "Log4j",
         "keywords": ["log4j", "log4shell"],
         "description": "Busca copias de Log4j vulnerables en el equipo.",
         "lang": "bash",
@@ -26,6 +28,7 @@ TECH_GUIDES = [
         ],
     },
     {
+        "name": "OpenSSH",
         "keywords": ["openssh", "ssh"],
         "description": "Revisa la versión de OpenSSH y su configuración.",
         "lang": "bash",
@@ -36,6 +39,7 @@ TECH_GUIDES = [
         ],
     },
     {
+        "name": "nginx",
         "keywords": ["nginx"],
         "description": "Confirma la versión de nginx en uso.",
         "lang": "bash",
@@ -46,6 +50,7 @@ TECH_GUIDES = [
         ],
     },
     {
+        "name": "Docker",
         "keywords": ["docker"],
         "description": "Revisa la versión de Docker y los contenedores.",
         "lang": "bash",
@@ -55,6 +60,7 @@ TECH_GUIDES = [
         ],
     },
     {
+        "name": "Kubernetes",
         "keywords": ["kubernetes", "kubectl"],
         "description": "Revisa la versión del clúster y de kubectl.",
         "lang": "bash",
@@ -64,6 +70,7 @@ TECH_GUIDES = [
         ],
     },
     {
+        "name": "Node.js",
         "keywords": ["npm", "node.js", "nodejs"],
         "description": "Audita dependencias de Node.js en tu proyecto.",
         "lang": "bash",
@@ -73,6 +80,7 @@ TECH_GUIDES = [
         ],
     },
     {
+        "name": "Python",
         "keywords": ["python", "pip"],
         "description": "Audita dependencias de Python en tu proyecto.",
         "lang": "bash",
@@ -82,6 +90,7 @@ TECH_GUIDES = [
         ],
     },
     {
+        "name": "Windows",
         "keywords": ["windows", "microsoft"],
         "description": "Revisa parches instalados en Windows.",
         "lang": "powershell",
@@ -122,6 +131,27 @@ def _valid_lines(lines):
     ]
 
 
+def _diagram(component, categories):
+    # Diagrama defensivo del escenario de riesgo: cómo llega el
+    # ataque y en qué puntos se puede frenar.
+    if "SECURITY" not in categories:
+        return None
+
+    return {
+        "nodes": [
+            "Internet o red no confiable",
+            f"{component or 'Software afectado'} expuesto",
+            "Versión sin parche",
+            "Acceso no autorizado",
+        ],
+        "controls": [
+            "Limita la exposición",
+            "Aplica el parche",
+            "Detecta y responde",
+        ],
+    }
+
+
 def build_guide(content):
     title = content.get("title", "")
     categories = content.get("categories", [])
@@ -140,6 +170,7 @@ def build_guide(content):
                     "lines": lines,
                     "steps": steps,
                     "specific": True,
+                    "diagram": _diagram(guide["name"], categories),
                 }
 
     return {
@@ -148,4 +179,5 @@ def build_guide(content):
         "lines": [],
         "steps": steps,
         "specific": False,
+        "diagram": _diagram(None, categories),
     }
