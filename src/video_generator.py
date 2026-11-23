@@ -222,6 +222,9 @@ def build_scenes(content):
     guide = build_guide(content)
     scenes.append(_code_scene(content, guide))
 
+    if guide["diagram"]:
+        scenes.append(_diagram_scene(guide["diagram"]))
+
     if guide["steps"]:
         scenes.append(_steps_scene(guide["steps"]))
 
@@ -247,6 +250,73 @@ def build_scenes(content):
     return scenes
 
 
+def _diagram_scene(diagram):
+    return {
+        "heading": "Escenario de riesgo",
+        "style": "diagram",
+        "paragraphs": [],
+        "diagram": diagram,
+        "narration": (
+            "Así llega el riesgo: " + " ".join(diagram["nodes"]) + ". "
+            "Puedes frenarlo en cada paso: "
+            + ", ".join(diagram["controls"]) + "."
+        ),
+    }
+
+
+def _draw_diagram(draw, diagram):
+    box_w, box_h, gap = 180, 130, 36
+    top = 230
+
+    for index, label in enumerate(diagram["nodes"]):
+        x = 110 + index * (box_w + gap)
+
+        draw.rounded_rectangle(
+            (x, top, x + box_w, top + box_h),
+            radius=16,
+            fill=CODE_BG,
+            outline=ACCENT,
+            width=2,
+        )
+
+        text = textwrap.fill(label, 12)
+        _, _, text_w, text_h = draw.multiline_textbbox(
+            (0, 0), text, font=F_TAGS, spacing=6, align="center"
+        )
+        draw.multiline_text(
+            (x + (box_w - text_w) / 2, top + (box_h - text_h) / 2),
+            text,
+            font=F_TAGS,
+            fill=TEXT,
+            spacing=6,
+            align="center",
+        )
+
+        if index < len(diagram["nodes"]) - 1:
+            y = top + box_h // 2
+            tip = x + box_w + gap - 6
+            draw.line((x + box_w + 6, y, tip, y), fill=ACCENT, width=3)
+            draw.polygon(
+                [(tip, y), (tip - 10, y - 7), (tip - 10, y + 7)],
+                fill=ACCENT,
+            )
+
+    step = box_w + gap
+    for index, label in enumerate(diagram["controls"]):
+        center = 110 + box_w + gap // 2 + index * step
+        text = textwrap.fill(label, 16)
+        _, _, text_w, _ = draw.multiline_textbbox(
+            (0, 0), text, font=F_TAGS, align="center"
+        )
+        draw.multiline_text(
+            (center - text_w / 2, top + box_h + 24),
+            text,
+            font=F_TAGS,
+            fill=MUTED,
+            align="center",
+        )
+
+
 def render_card(scene, path):
 
     image = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
@@ -261,6 +331,11 @@ def render_card(scene, path):
     )
 
     draw.text((110, 110), scene["heading"], font=F_HEADING, fill=ACCENT)
+
+    if scene["style"] == "diagram":
+        _draw_diagram(draw, scene["diagram"])
+        image.save(path)
+        return
 
     y = 180
 
