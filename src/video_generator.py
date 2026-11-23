@@ -15,7 +15,10 @@ import unicodedata
 from pathlib import Path
 
 import edge_tts
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
+from pygments import lex
+from pygments.lexers import get_lexer_by_name
+from pygments.token import Token
 
 from infographic import ACCENT, BORDER, MUTED, PANEL, TEXT, get_font
 
@@ -29,10 +32,140 @@ TICKS_PER_SECOND = 10_000_000
 TAIL_SECONDS = 0.8
 WORDS_PER_LINE = 7
 
+PANEL_RIGHT = 1000
+AVATAR_PATH = Path(__file__).resolve().parent.parent / "assets" / "avatar.png"
+AVATAR_SIZE = (240, 300)
+AVATAR_X = 1020
+AVATAR_Y = 110
+AVATAR_BOB = 8
+SPEECH_GAP = 0.35
+
 F_HEADING = get_font(34, True)
 F_TITLE = get_font(50, True)
 F_BODY = get_font(30)
 F_TAGS = get_font(24)
+
+
+def _mono_font(size):
+    for path in (
+        "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
+        "C:/Windows/Fonts/consola.ttf",
+    ):
+        try:
+            return ImageFont.truetype(path, size)
+        except OSError:
+            continue
+    return get_font(size)
+
+
+F_CODE = _mono_font(24)
+
+CODE_HEADING = "Configuración práctica"
+
+CODE_TOKEN_COLORS = [
+    (Token.Comment, "#6B7F95"),
+    (Token.Keyword, ACCENT),
+    (Token.Name.Builtin, ACCENT),
+    (Token.Name.Tag, ACCENT),
+    (Token.String, "#A3E635"),
+    (Token.Number, "#FBBF24"),
+    (Token.Operator, "#94A3B8"),
+    (Token.Punctuation, "#94A3B8"),
+]
+CODE_COLORS = dict(CODE_TOKEN_COLORS)
+CODE_PANEL = (60, 60, PANEL_RIGHT, 590)
+CODE_BOX = (90, 290, PANEL_RIGHT - 40, 570)
+CODE_BG = "#071827"
+CODE_TEXT_X = 115
+CODE_LINE_Y0 = 305
+CODE_LINE_H = 32
+
+CODE_EXAMPLES = {
+    "SECURITY": {
+        "description": "Revisa actualizaciones y puertos abiertos en Linux.",
+        "lang": "bash",
+        "lines": [
+            "sudo apt update",
+            "sudo apt list --upgradable",
+            "sudo apt upgrade -y",
+            "sudo ss -tulpn",
+            "sudo ufw status verbose",
+        ],
+    },
+    "AI": {
+        "description": "Prepara un entorno aislado para trabajar con IA.",
+        "lang": "bash",
+        "lines": [
+            "python3 -m venv .venv",
+            "source .venv/bin/activate",
+            "pip install --upgrade pip",
+            "pip install openai python-dotenv",
+            "cp .env.example .env",
+        ],
+    },
+    "DEVOPS": {
+        "description": "Ejecuta un flujo de GitHub Actions todos los días.",
+        "lang": "yaml",
+        "lines": [
+            "on:",
+            "  schedule:",
+            "    - cron: '0 13 * * *'",
+            "  workflow_dispatch:",
+            "jobs:",
+            "  report:",
+            "    runs-on: ubuntu-latest",
+            "    steps:",
+        ],
+    },
+    "CLOUD": {
+        "description": "Verifica la cuenta y la configuración de la nube.",
+        "lang": "bash",
+        "lines": [
+            "aws configure list",
+            "aws sts get-caller-identity",
+            "aws s3 ls",
+        ],
+    },
+    "AUTOMATION": {
+        "description": "Programa una tarea diaria con cron.",
+        "lang": "bash",
+        "lines": [
+            "crontab -l",
+            "# Ejecutar todos los días a las 7:00",
+            "0 7 * * * /usr/bin/python3 /opt/app/main.py",
+        ],
+    },
+    "OTHER": {
+        "description": "Mantén tu sistema actualizado con comandos básicos.",
+        "lang": "bash",
+        "lines": [
+            "sudo apt update",
+            "sudo apt upgrade -y",
+            "uname -a",
+            "df -h",
+        ],
+    },
+}
+
+
+def _code_scene(content):
+    category = next(
+        (c for c in content.get("categories", []) if c in CODE_EXAMPLES),
+        "OTHER",
+    )
+    example = CODE_EXAMPLES[category]
+    description = example["description"]
+
+    return {
+        "heading": CODE_HEADING,
+        "style": "code",
+        "paragraphs": [description],
+        "code": {"lang": example["lang"], "lines": example["lines"]},
+        "narration": (
+            f"Configuración de ejemplo: {description} "
+            "Revisa cada comando antes de ejecutarlo."
+        ),
+    }
 
 
 def build_scenes(content):
@@ -69,6 +202,8 @@ def build_scenes(content):
             }
         )
 
+    scenes.append(_code_scene(content))
+
     if recommendations:
         scenes.append(
             {
@@ -97,7 +232,7 @@ def render_card(scene, path):
     draw = ImageDraw.Draw(image)
 
     draw.rounded_rectangle(
-        (60, 60, WIDTH - 60, 520),
+        (60, 60, PANEL_RIGHT, 520),
         radius=24,
         fill=PANEL,
         outline=BORDER,
@@ -111,15 +246,15 @@ def render_card(scene, path):
     for index, paragraph in enumerate(scene["paragraphs"]):
 
         if scene["style"] == "title" and index == 0:
-            font, fill, text = F_TITLE, TEXT, textwrap.fill(paragraph, 34)
+            font, fill, text = F_TITLE, TEXT, textwrap.fill(paragraph, 24)
         elif scene["style"] == "title":
-            font, fill, text = F_TAGS, MUTED, textwrap.fill(paragraph, 60)
+            font, fill, text = F_TAGS, MUTED, textwrap.fill(paragraph, 45)
         elif scene["style"] == "list":
             font, fill, text = F_BODY, TEXT, textwrap.fill(
-                "• " + paragraph, 58, subsequent_indent="   "
+                "• " + paragraph, 46, subsequent_indent="   "
             )
         else:
-            font, fill, text = F_BODY, TEXT, textwrap.fill(paragraph, 58)
+            font, fill, text = F_BODY, TEXT, textwrap.fill(paragraph, 48)
 
         draw.multiline_text((110, y), text, font=font, fill=fill, spacing=10)
 
@@ -130,6 +265,101 @@ def render_card(scene, path):
         y = bottom + 28
 
     image.save(path)
+
+
+def _token_color(ttype):
+
+    while ttype is not None:
+        if ttype in CODE_COLORS:
+            return CODE_COLORS[ttype]
+        ttype = ttype.parent
+
+    return TEXT
+
+
+def _draw_code_line(draw, line, lexer, x, y):
+
+    for ttype, value in lex(line, lexer):
+        draw.text((x, y), value, font=F_CODE, fill=_token_color(ttype))
+        x += F_CODE.getlength(value)
+
+
+def render_code_layers(scene, work_dir, index, duration):
+    """Devuelve [(png, inicio_s)]: el panel base y cada línea de código
+    apareciendo en el momento en que el narrador la menciona."""
+
+    code = scene["code"]
+
+    base = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(base)
+
+    draw.rounded_rectangle(
+        CODE_PANEL, radius=24, fill=PANEL, outline=BORDER, width=2
+    )
+
+    for x, color in zip((100, 122, 144), ("#FF5F56", "#FFBD2E", "#27C93F")):
+        draw.ellipse((x - 7, 88, x + 7, 102), fill=color)
+
+    draw.text((100, 125), scene["heading"], font=F_HEADING, fill=ACCENT)
+    description = textwrap.fill(scene["paragraphs"][0], 44)
+    draw.multiline_text(
+        (100, 180), description, font=F_BODY, fill=TEXT, spacing=8
+    )
+
+    draw.rounded_rectangle(
+        CODE_BOX, radius=14, fill=CODE_BG, outline=BORDER, width=2
+    )
+
+    base_path = work_dir / f"code_base_{index}.png"
+    base.save(base_path)
+
+    layers = [(base_path, 0.0)]
+
+    lines = code["lines"]
+    lexer = get_lexer_by_name(code["lang"], stripnl=False, ensurenl=False)
+    step = (duration - 1.2) / len(lines)
+
+    for line_index, line in enumerate(lines):
+
+        frame = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
+        _draw_code_line(
+            ImageDraw.Draw(frame),
+            line,
+            lexer,
+            CODE_TEXT_X,
+            CODE_LINE_Y0 + line_index * CODE_LINE_H,
+        )
+
+        path = work_dir / f"code_{index}_{line_index}.png"
+        frame.save(path)
+        layers.append((path, 0.8 + line_index * step))
+
+    return layers
+
+
+def _speech_spans(words):
+
+    spans = []
+
+    for _, start, end in words:
+        if spans and start - spans[-1][1] < SPEECH_GAP:
+            spans[-1][1] = max(spans[-1][1], end)
+        else:
+            spans.append([start, end])
+
+    return spans
+
+
+def _avatar_y_expr(spans):
+
+    if not spans:
+        return str(AVATAR_Y)
+
+    speaking = "+".join(
+        f"between(t,{start:.2f},{end:.2f})" for start, end in spans
+    )
+
+    return f"{AVATAR_Y}-{AVATAR_BOB}*abs(sin(3*PI*t))*({speaking})"
 
 
 def _ass_time(seconds):
@@ -281,7 +511,7 @@ def _probe_duration(path):
     return float(result.stdout.strip())
 
 
-def _render_segment(index, duration, is_last, work_dir):
+def _render_segment(index, duration, is_last, layers, speech_spans, work_dir):
 
     video_filters = []
 
@@ -296,43 +526,65 @@ def _render_segment(index, duration, is_last, work_dir):
 
     video_filters.append(f"ass=caption_{index}.ass")
 
-    filter_graph = (
-        "[0:v][1:v]overlay="
-        "x=0:y='if(lt(t,0.6),(1-t/0.6)*60,0)'[base];"
-        f"[base]{','.join(video_filters)}[v];"
-        "[2:a]apad[a]"
-    )
+    avatar_input = len(layers) + 1
+    audio_input = len(layers) + 2
 
-    _run(
-        [
-            "ffmpeg", "-y",
-            "-t", f"{duration:.2f}",
-            "-f", "lavfi",
-            "-i", (
-                f"gradients=size={WIDTH}x{HEIGHT}:rate={FPS}:"
-                f"speed=0.015:seed={index}:"
-                "c0=0x071827:c1=0x0D2538:c2=0x1B6E8C:c3=0x071827:"
-                "nb_colors=4"
-            ),
-            "-loop", "1",
-            "-t", f"{duration:.2f}",
-            "-i", f"card_{index}.png",
-            "-i", f"scene_{index}.mp3",
-            "-filter_complex", filter_graph,
-            "-map", "[v]",
-            "-map", "[a]",
-            "-t", f"{duration:.2f}",
-            "-c:v", "libx264",
-            "-preset", "veryfast",
-            "-crf", "23",
-            "-pix_fmt", "yuv420p",
-            "-r", str(FPS),
-            "-c:a", "aac",
-            "-b:a", "192k",
-            f"segment_{index}.mp4",
-        ],
-        cwd=work_dir,
+    filter_parts = []
+    previous = "0:v"
+
+    for layer_index, (_, start) in enumerate(layers):
+        input_index = layer_index + 1
+        if layer_index == 0:
+            options = "x=0:y='if(lt(t,0.6),(1-t/0.6)*60,0)'"
+        else:
+            options = f"x=0:y=0:enable='gte(t,{start:.2f})'"
+        filter_parts.append(
+            f"[{previous}][{input_index}:v]overlay={options}[l{layer_index}]"
+        )
+        previous = f"l{layer_index}"
+
+    filter_parts.append(
+        f"[{previous}][{avatar_input}:v]overlay="
+        f"x={AVATAR_X}:y='{_avatar_y_expr(speech_spans)}'[la]"
     )
+    filter_parts.append(f"[la]{','.join(video_filters)}[v]")
+    filter_parts.append(f"[{audio_input}:a]apad[a]")
+
+    command = [
+        "ffmpeg", "-y",
+        "-t", f"{duration:.2f}",
+        "-f", "lavfi",
+        "-i", (
+            f"gradients=size={WIDTH}x{HEIGHT}:rate={FPS}:"
+            f"speed=0.015:seed={index}:"
+            "c0=0x071827:c1=0x0D2538:c2=0x1B6E8C:c3=0x071827:"
+            "nb_colors=4"
+        ),
+    ]
+
+    for layer_path, _ in layers:
+        command += ["-loop", "1", "-t", f"{duration:.2f}", "-i", layer_path.name]
+
+    command += [
+        "-loop", "1",
+        "-t", f"{duration:.2f}",
+        "-i", "avatar.png",
+        "-i", f"scene_{index}.mp3",
+        "-filter_complex", ";".join(filter_parts),
+        "-map", "[v]",
+        "-map", "[a]",
+        "-t", f"{duration:.2f}",
+        "-c:v", "libx264",
+        "-preset", "veryfast",
+        "-crf", "23",
+        "-pix_fmt", "yuv420p",
+        "-r", str(FPS),
+        "-c:a", "aac",
+        "-b:a", "192k",
+        f"segment_{index}.mp4",
+    ]
+
+    _run(command, cwd=work_dir)
 
 
 def _concat(names, list_path, output_path, work_dir):
@@ -384,6 +636,11 @@ def generate_video(content, output_dir="data"):
 
         narrations = asyncio.run(_synthesize_all(scenes, work_dir))
 
+        avatar = Image.open(AVATAR_PATH).convert("RGBA")
+        avatar.resize(AVATAR_SIZE, Image.Resampling.LANCZOS).save(
+            work_dir / "avatar.png"
+        )
+
         segments = []
         audio_parts = []
 
@@ -393,7 +650,13 @@ def generate_video(content, output_dir="data"):
 
             duration = _probe_duration(audio_path) + TAIL_SECONDS
 
-            render_card(scene, work_dir / f"card_{index}.png")
+            if scene["style"] == "code":
+                layers = render_code_layers(scene, work_dir, index, duration)
+            else:
+                card_path = work_dir / f"card_{index}.png"
+                render_card(scene, card_path)
+                layers = [(card_path, 0.0)]
+
             (work_dir / f"caption_{index}.ass").write_text(
                 build_ass(words),
                 encoding="utf-8",
@@ -403,6 +666,8 @@ def generate_video(content, output_dir="data"):
                 index,
                 duration,
                 index == len(scenes) - 1,
+                layers,
+                _speech_spans(words),
                 work_dir,
             )
 

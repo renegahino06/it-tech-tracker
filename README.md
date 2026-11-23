@@ -49,9 +49,11 @@ Esto ya funciona con el flujo actual.
 
 El pipeline genera un video animado de la noticia principal:
 
-1. `src/video_generator.py` divide el contenido de `data/top_story.json` en escenas: título, por qué importa, recomendaciones y cierre.
+1. `src/video_generator.py` divide el contenido de `data/top_story.json` en escenas: título, por qué importa, configuración práctica, recomendaciones y cierre.
 2. `edge-tts` narra cada escena (sin API key) y devuelve los tiempos por palabra.
-3. `ffmpeg` renderiza cada escena con un fondo animado (filtro `gradients`), una tarjeta que entra con animación y subtítulos karaoke (`ass`) que se iluminan al ritmo de la voz. Después concatena las escenas en `data/video_<titulo-de-la-noticia>.mp4` (nombre generado a partir del título) y guarda la narración en `data/narration.mp3`.
+3. `ffmpeg` renderiza cada escena con un fondo animado (filtro `gradients`), una tarjeta que entra con animación, subtítulos karaoke (`ass`) que se iluminan al ritmo de la voz y el avatar de `assets/avatar.png`, que rebota mientras habla.
+4. La escena "Configuración práctica" muestra comandos o YAML de ejemplo con resaltado de sintaxis (`pygments`). Las líneas aparecen al ritmo de la narración. Los ejemplos vienen de una biblioteca por categoría (`CODE_EXAMPLES`), no se generan con IA; para cambiarlos, edita ese diccionario.
+5. Se concatenan las escenas en `data/video_<titulo-de-la-noticia>.mp4` (nombre generado a partir del título) y se guarda la narración en `data/narration.mp3`.
 
 `ffmpeg` debe estar instalado con soporte para `libass`. El workflow de GitHub Actions lo instala con `apt-get` en cada ejecución. En Windows puedes instalarlo con `winget install --id Gyan.FFmpeg`.
 
