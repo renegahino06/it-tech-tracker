@@ -21,6 +21,7 @@ from pygments.lexers import get_lexer_by_name
 from pygments.token import Token
 
 from infographic import ACCENT, BORDER, MUTED, PANEL, TEXT, get_font
+from security_guide import build_guide
 
 
 VOICE = "es-MX-DaliaNeural"
@@ -148,23 +149,39 @@ CODE_EXAMPLES = {
 }
 
 
-def _code_scene(content):
-    category = next(
-        (c for c in content.get("categories", []) if c in CODE_EXAMPLES),
-        "OTHER",
-    )
-    example = CODE_EXAMPLES[category]
-    description = example["description"]
+def _code_scene(content, guide=None):
+    if guide and guide["specific"]:
+        description = guide["description"]
+        lang = guide["lang"]
+        lines = guide["lines"]
+    else:
+        category = next(
+            (c for c in content.get("categories", []) if c in CODE_EXAMPLES),
+            "OTHER",
+        )
+        example = CODE_EXAMPLES[category]
+        description = example["description"]
+        lang = example["lang"]
+        lines = example["lines"]
 
     return {
         "heading": CODE_HEADING,
         "style": "code",
         "paragraphs": [description],
-        "code": {"lang": example["lang"], "lines": example["lines"]},
+        "code": {"lang": lang, "lines": lines},
         "narration": (
             f"Configuración de ejemplo: {description} "
             "Revisa cada comando antes de ejecutarlo."
         ),
+    }
+
+
+def _steps_scene(steps):
+    return {
+        "heading": "Cómo mitigarla",
+        "style": "list",
+        "paragraphs": steps,
+        "narration": "Pasos para mitigar: " + " ".join(steps),
     }
 
 
@@ -202,7 +219,11 @@ def build_scenes(content):
             }
         )
 
-    scenes.append(_code_scene(content))
+    guide = build_guide(content)
+    scenes.append(_code_scene(content, guide))
+
+    if guide["steps"]:
+        scenes.append(_steps_scene(guide["steps"]))
 
     if recommendations:
         scenes.append(
